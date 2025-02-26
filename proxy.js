@@ -28,5 +28,6 @@ const proxy = new Proxy(obj, {
 })
 
 proxy.a = 3
+proxy.aa = 22
 delete proxy.f
 console.log(proxy)
