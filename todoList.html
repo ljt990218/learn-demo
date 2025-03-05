@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="bg-gray-50 min-h-screen">
+            <div class="container mx-auto max-w-md px-4 py-8">
+                <header class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-800">我的待办事项</h1>
+                    <p class="text-gray-500 mt-2">管理你的日常任务</p>
+                </header>
+                
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <!-- 待办事项列表 -->
+                    <ul v-if="todos.length" class="divide-y divide-gray-100">
+                        <li v-for="todo in todos" :key="todo.id" class="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <div class="flex items-center">
+                                <input 
+                                    type="checkbox" 
+                                    v-model="todo.completed"
+                                    class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                >
+                                <span :class="['ml-3', todo.completed ? 'text-gray-400 line-through' : 'text-gray-700']">
+                                    {{ todo.text }}
+                                </span>
+                            </div>
+                            <button @click="removeTodo(todo.id)" class="text-gray-400 hover:text-red-500">
+                                <img src="https://unpkg.com/lucide-static@latest/icons/trash-2.svg" class="w-5 h-5">
+                            </button>
+                        </li>
+                    </ul>
+                    
+                    <!-- 空状态 -->
+                    <div v-else class="p-8 text-center">
+                        <img src="https://unpkg.com/lucide-static@latest/icons/clipboard-list.svg" class="w-16 h-16 mx-auto text-gray-300">
+                        <p class="mt-4 text-gray-500">暂无待办事项</p>
+                        <p class="text-sm text-gray-400">点击下方按钮添加新任务</p>
+                    </div>
+                </div>
+                
+                <!-- 添加按钮 -->
+                <div class="mt-6 flex justify-center">
+                    <button @click="showAddTodoPrompt" class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-full px-6 py-3 flex items-center shadow-lg transition-colors">
+                        <img src="https://unpkg.com/lucide-static@latest/icons/plus.svg" class="w-5 h-5 mr-2">
+                        添加新任务
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref } = Vue
+
+        createApp({
+            setup() {
+                const todos = ref([
+                    { id: 1, text: '完成网页设计', completed: false },
+                    { id: 2, text: '学习 Tailwind CSS', completed: false },
+                    { id: 3, text: '阅读文档', completed: true }
+                ])
+
+                const showAddTodoPrompt = () => {
+                    const todoText = prompt('请输入新的待办事项:')
+                    if (todoText?.trim()) {
+                        const newTodo = {
+                            id: Date.now(),
+                            text: todoText,
+                            completed: false
+                        }
+                        todos.value.push(newTodo)
+                    }
+                }
+
+                const removeTodo = (id) => {
+                    const index = todos.value.findIndex(todo => todo.id === id)
+                    if (index > -1) {
+                        todos.value.splice(index, 1)
+                    }
+                }
+
+                return {
+                    todos,
+                    showAddTodoPrompt,
+                    removeTodo
+                }
+            }
+        }).mount('#app')
+    </script>
+</body>
+</html>
